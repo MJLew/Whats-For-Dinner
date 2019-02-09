@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">What\'s For Dinner</string>
+    <string name="title_activity_search">SearchActivity</string>
+</resources>
