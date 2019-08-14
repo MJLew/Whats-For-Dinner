@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+    //Hello
     TextView suggestionTextView;
     Button nextSuggestButton;
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             File path = getExternalFilesDir(null);
             //File sd = new File("/storage/9C33-6BBD/Android/data/com.example.michael.whatsfordinner/files");
-            File spreadsheetCSV = new File(path, "recipes.csv");
+            File spreadsheetCSV = new File(path, "dinner list.csv");
 
             if (!spreadsheetCSV.exists()){
                 //Log.i("foo", "doesn't exist");

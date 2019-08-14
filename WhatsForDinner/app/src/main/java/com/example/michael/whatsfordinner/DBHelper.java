@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
