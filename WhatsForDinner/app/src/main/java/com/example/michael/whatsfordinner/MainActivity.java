@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
-    //Hello
+    //Hello 2
     TextView suggestionTextView;
     Button nextSuggestButton;
 
