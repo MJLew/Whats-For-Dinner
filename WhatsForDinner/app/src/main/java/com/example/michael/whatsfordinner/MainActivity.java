@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
-    //Hello 2
     TextView suggestionTextView;
     Button nextSuggestButton;
 
@@ -102,12 +101,14 @@ public class MainActivity extends AppCompatActivity {
         helper.close();
     }
 
+    //On click "Next", pulls up another random suggestion
     public void onNextSuggestClick(View view){
         ArrayList<String> trueFiltersStrings = helper.getTrueFiltersList(db, filterGridView.getCheckedItemPositions(), filterList);
         suggestionTextView.setText(helper.getRandomRow(db, trueFiltersStrings));
     }
 
 
+    //On click go to manual search activity
     public void onManualSearchClick(View view){
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
         intent.putExtra("filterList", filterList);
@@ -120,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.layout_menu_item_longpress, menu);
     }
 
+    //On longpress create context menu that shows item's filters
+    //TODO Make it so that related items are shown here as well
     public boolean onContextItemSelected (final MenuItem menuItem){
         switch(menuItem.getItemId()){
             case R.id.show_filters:

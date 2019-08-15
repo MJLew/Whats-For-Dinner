@@ -52,6 +52,7 @@ public class SearchActivity extends AppCompatActivity {
         searchListView.setAdapter(searchListAdapter);
     }
 
+    //When pressing the Use Filters button, pulls up a dialog to search using filters
     public void onUseFilterClick(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View layout = getLayoutInflater().inflate(R.layout.filter_dialog_layout, null);
@@ -92,6 +93,8 @@ public class SearchActivity extends AppCompatActivity {
         inflater.inflate(R.menu.layout_menu_item_longpress, menu);
     }
 
+    //When you longpress on an item, context menu is created that shows filters.
+    //TODO Make it so that related items are shown here as well
     public boolean onContextItemSelected (final MenuItem menuItem){
         switch(menuItem.getItemId()){
             case R.id.show_filters:
