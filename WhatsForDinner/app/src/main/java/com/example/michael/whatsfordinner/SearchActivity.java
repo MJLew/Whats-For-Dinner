@@ -30,6 +30,7 @@ public class SearchActivity extends AppCompatActivity {
     ArrayList<String> filterList;
 
     @Override
+    //TODO Change all db functionality into just OO
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
@@ -53,6 +54,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     //When pressing the Use Filters button, pulls up a dialog to search using filters
+    //TODO Change all db functionality into just OO
     public void onUseFilterClick(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View layout = getLayoutInflater().inflate(R.layout.filter_dialog_layout, null);
@@ -94,6 +96,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     //When you longpress on an item, context menu is created that shows filters.
+    //TODO Change all db functionality into just OO
     //TODO Make it so that related items are shown here as well
     public boolean onContextItemSelected (final MenuItem menuItem){
         switch(menuItem.getItemId()){

@@ -138,7 +138,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<String> getTrueFiltersList (SQLiteDatabase db, SparseBooleanArray checkedFilters, ArrayList<String> filterList){
-    ArrayList<String> trueFiltersStrings = new ArrayList<String>();
+        ArrayList<String> trueFiltersStrings = new ArrayList<String>();
 
         if (checkedFilters.size() != 0){
         for (int i = 0; i < checkedFilters.size(); i++){

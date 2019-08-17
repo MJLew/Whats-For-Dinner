@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,21 +22,29 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 public class MainActivity extends AppCompatActivity {
+    Random rng = new Random();
     TextView suggestionTextView;
     Button nextSuggestButton;
-
     Button manualSearchButton;
     GridView filterGridView;
     ArrayAdapter<String> filterGridAdapter;
+
     ArrayList<String> filterList = null;
+    ArrayList<FoodItem> allItemsList = null;
+
 
     DBHelper helper = null;
     SQLiteDatabase db = null;
     ContentValues values = null;
 
     @Override
+    //TODO Change all db functionality into just OO
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -55,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             //File sd = new File("/storage/9C33-6BBD/Android/data/com.example.michael.whatsfordinner/files");
             File spreadsheetCSV = new File(path, "dinner list.csv");
 
+            //TODO Make this a seperate function because it shouldn't reload every time
             if (!spreadsheetCSV.exists()){
                 //Log.i("foo", "doesn't exist");
             }
@@ -75,18 +85,21 @@ public class MainActivity extends AppCompatActivity {
                 db = helper.getWritableDatabase();
                 values = new ContentValues();
 
-                // Reading the rest of the file into the database
+                // Reading the rest of the file into a list of foodItems
                 while((line = bfr.readLine()) != null){
                     String[] splitLine = line.split(",");
-                    helper.addRow(db, splitLine);
+                    FoodItem item = new FoodItem(splitLine[0]); //Construct using name of the item
+                    item.setFiltersMap(Arrays.copyOfRange(splitLine,1,splitLine.length), filterList);
+                    allItemsList.add(item);
                 }
 
-                // Linking database filters to the grid view
+                // Linking filters to the grid view
                 filterGridAdapter = new ArrayAdapter<>(this, R.layout.filter_grid_layout, filterList);
                 filterGridView.setAdapter(filterGridAdapter);
 
-
-                suggestionTextView.setText(helper.getRandomRow(db, null));
+                // Randomly select default choice
+                rng.nextInt();
+                suggestionTextView.setText(allItemsList.get(rng.nextInt()).getName());
             }
         }
         catch (Exception e){
@@ -103,8 +116,29 @@ public class MainActivity extends AppCompatActivity {
 
     //On click "Next", pulls up another random suggestion
     public void onNextSuggestClick(View view){
-        ArrayList<String> trueFiltersStrings = helper.getTrueFiltersList(db, filterGridView.getCheckedItemPositions(), filterList);
-        suggestionTextView.setText(helper.getRandomRow(db, trueFiltersStrings));
+        SparseBooleanArray checkedFilters = filterGridView.getCheckedItemPositions();
+        ArrayList<String> checkedFiltersStrings = new ArrayList<String>();
+
+        // Check the strings of the filters that are checked
+        if (checkedFilters.size() != 0) {
+            for (int i = 0; i < checkedFilters.size(); i++) {
+                boolean value = checkedFilters.valueAt(i);
+                if (value == true) {
+                    String trueFilter = filterList.get(checkedFilters.keyAt(i));
+                    checkedFiltersStrings.add(trueFilter);
+                }
+            }
+        }
+
+        // Choose a random item based on filter
+        // Keep choosing random ones until all filters match
+        FoodItem randItem;
+        do {
+            int rand = rng.nextInt() % allItemsList.size();
+            randItem = allItemsList.get(rand);
+        } while (randItem.checkIfFilters(checkedFiltersStrings) == TRUE);
+
+        suggestionTextView.setText(randItem.getName());
     }
 
 
