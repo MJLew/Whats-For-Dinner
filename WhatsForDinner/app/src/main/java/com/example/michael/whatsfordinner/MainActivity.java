@@ -52,35 +52,35 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(suggestionTextView);
         // Reading in csv file and creating database if it exists
         try {
-            File path = getExternalFilesDir(null);
-            //File sd = new File("/storage/9C33-6BBD/Android/data/com.example.michael.whatsfordinner/files");
-            File spreadsheetCSV = new File(path, "dinner list.csv");
-
-            if (!spreadsheetCSV.exists()){
-                //Log.i("foo", "doesn't exist");
-            }
-            else {
-                //Log.i("foo", "does exist");
-                String line;
-                FileReader fr = new FileReader(spreadsheetCSV);
-                BufferedReader bfr = new BufferedReader(fr);
-
-                // Getting the first line of the file which should always be name,filter,filter,filter etc
-                line = bfr.readLine();
-                filterList = new ArrayList<>(Arrays.asList(line.split(",")));
-                filterList.remove(0);
+//            File path = getExternalFilesDir(null);
+//            //File sd = new File("/storage/9C33-6BBD/Android/data/com.example.michael.whatsfordinner/files");
+//            File spreadsheetCSV = new File(path, "dinner list.csv");
+//
+//            if (!spreadsheetCSV.exists()){
+//                //Log.i("foo", "doesn't exist");
+//            }
+//            else {
+//                //Log.i("foo", "does exist");
+//                String line;
+//                FileReader fr = new FileReader(spreadsheetCSV);
+//                BufferedReader bfr = new BufferedReader(fr);
+//
+//                // Getting the first line of the file which should always be name,filter,filter,filter etc
+//                line = bfr.readLine();
+//                filterList = new ArrayList<>(Arrays.asList(line.split(",")));
+//                filterList.remove(0);
 
                 // Creating database
                 helper = new DBHelper(this, "recipe_db", null, 1);
-                helper.setColList(filterList);
+//                helper.setColList(filterList);
                 db = helper.getWritableDatabase();
                 values = new ContentValues();
 
-                // Reading the rest of the file into the database
-                while((line = bfr.readLine()) != null){
-                    String[] splitLine = line.split(",");
-                    helper.addRow(db, splitLine);
-                }
+//                // Reading the rest of the file into the database
+//                while((line = bfr.readLine()) != null){
+//                    String[] splitLine = line.split(",");
+//                    helper.addRow(db, splitLine);
+//                }
 
                 // Linking database filters to the grid view
                 filterGridAdapter = new ArrayAdapter<>(this, R.layout.filter_grid_layout, filterList);
