@@ -2,6 +2,7 @@ package com.example.michael.whatsfordinner;
 
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -25,7 +27,10 @@ public class SearchActivity extends AppCompatActivity {
     SQLiteDatabase db = null;
     ListView searchListView;
     Button useFilterButton;
-    ArrayList<String> recipeList;
+    FloatingActionButton fab;
+    Toolbar searchToolbar;
+    ArrayList<String> foodList;
+    ArrayList<String> uniqueFoodList;
     ArrayAdapter<String> searchListAdapter;
     ArrayList<String> filterList;
 
@@ -39,16 +44,28 @@ public class SearchActivity extends AppCompatActivity {
             filterList = extras.getStringArrayList("filterList");
         }
 
-        searchListView = findViewById(R.id.searchListView);
-        useFilterButton = findViewById(R.id.useFilterButton);
+        searchListView = (ListView) findViewById(R.id.searchListView);
+        useFilterButton = (Button) findViewById(R.id.useFilterButton);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
 
-        helper = new DBHelper(this, "recipe_db", null, 1);
+
+
+        helper = new DBHelper(this, "food_db", null, 1);
         db = helper.getWritableDatabase();
 
-        recipeList = helper.getAllList(db);
+        foodList = helper.getAllList(db);
+        uniqueFoodList = helper.getFilteredStringList(db,null);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fabDialog();
+            }
+        });
 
         registerForContextMenu(searchListView);
-        searchListAdapter = new ArrayAdapter<String>(this, R.layout.search_list_layout, recipeList);
+        searchListAdapter = new ArrayAdapter<String>(this, R.layout.search_list_layout, uniqueFoodList);
         searchListView.setAdapter(searchListAdapter);
     }
 
@@ -129,4 +146,35 @@ public class SearchActivity extends AppCompatActivity {
         }
         return super.onContextItemSelected(menuItem);
     }
+
+    public void fabDialog(){
+        try{
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View layout = getLayoutInflater().inflate(R.layout.add_dialog_layout, null);
+
+            builder.setView(layout);
+            builder.setTitle("Add New Item");
+
+
+//            final ArrayAdapter<String> dialogFilterGridAdapter = new ArrayAdapter<String>(this, R.layout.filter_grid_layout_no_check, helper.getTypeNames(db));
+//            final GridView dialogFilterGridview = (GridView) layout.findViewById(R.id.dialogFilterGridView);
+//            dialogFilterGridview.setAdapter(dialogFilterGridAdapter);
+
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            builder.create();
+            builder.show();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_LONG).show();
+        }
+    }
+
 }

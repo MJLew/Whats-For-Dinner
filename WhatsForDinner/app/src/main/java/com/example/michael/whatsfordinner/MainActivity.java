@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,9 +26,9 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     //Hello 2
+    Toolbar mainToolbar;
     TextView suggestionTextView;
     Button nextSuggestButton;
-
     Button manualSearchButton;
     GridView filterGridView;
     ArrayAdapter<String> filterGridAdapter;
@@ -71,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
 //                filterList.remove(0);
 
                 // Creating database
-                helper = new DBHelper(this, "recipe_db", null, 1);
+                helper = new DBHelper(this, "food_db", null, 1);
 //                helper.setColList(filterList);
+            Log.i("foo","bruh");
                 db = helper.getWritableDatabase();
                 values = new ContentValues();
 
@@ -83,12 +86,11 @@ public class MainActivity extends AppCompatActivity {
 //                }
 
                 // Linking database filters to the grid view
+                filterList = new ArrayList<>(helper.getTypeNames(db));
                 filterGridAdapter = new ArrayAdapter<>(this, R.layout.filter_grid_layout, filterList);
                 filterGridView.setAdapter(filterGridAdapter);
-
-
                 suggestionTextView.setText(helper.getRandomRow(db, null));
-            }
+//            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -150,5 +152,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onContextItemSelected(menuItem);
+    }
+
+    public boolean onLinkClick(View view){
+        return true;
     }
 }

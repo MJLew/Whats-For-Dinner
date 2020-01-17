@@ -41,16 +41,30 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-
-        <Button
-            android:id="@+id/useFilterButton"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:onClick="onUseFilterClick"
-            android:text="Use Filters"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp" />
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/useFilterButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:onClick="onUseFilterClick"
+                android:text="Use Filters"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end|bottom"
+                android:contentDescription="submit"
+                android:layout_margin="-16dp"
+            />
+        </FrameLayout>
+
     </LinearLayout>
 
 

@@ -22,7 +22,7 @@
         <activity
             android:name="com.example.michael.whatsfordinner.SearchActivity"
             android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme.NoActionBar">
+            >
         </activity>
     </application>
 
