@@ -12,7 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.michael.whatsfordinner.MainActivity">
+        <activity
+            android:name=".EditActivity"
+            android:label="@string/title_activity_edit"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,10 +24,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.michael.whatsfordinner.SearchActivity"
-            android:label="@string/title_activity_search"
-            >
-        </activity>
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"></activity>
     </application>
 
 </manifest>

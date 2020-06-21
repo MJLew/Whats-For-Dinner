@@ -14,24 +14,27 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
-    ArrayList<String> colList;
+    List<String> typeNames;
     SQLiteStatement statement = null;
     private static String DATABASE_NAME = "food_db";
     // Possible extras = image, Ingredient list
     private static String SQL_CREATE_INFO_TABLE =
             "CREATE TABLE IF NOT EXISTS infoTable (" +
-                    "name TEXT NOT NULL, " +
+                    "name TEXT NOT NULL PRIMARY KEY, " +
                     "URL TEXT);";
     private static String SQL_CREATE_TYPE_TABLE =
             "CREATE TABLE IF NOT EXISTS typeTable (" +
-                    "name TEXT NOT NULL, " +
-                    "type TEXT);";
+                    "name TEXT NOT NULL PRIMARY KEY, " +
+                    "Vegetable INTEGER DEFAULT 0," +
+                    "Meat INTEGER DEFAULT 0," +
+                    "Carbs INTEGER DEFAULT 0);";
     private static String SQL_DROP_INFO_TABLE = "DROP TABLE IF EXISTS infoTable;";
     private static String SQL_DROP_TYPE_TABLE = "DROP TABLE IF EXISTS typeTable;";
     private static String SQL_INSERT_DEFAULT_INFO_VALUES =
-            "INSERT INTO infoTable(name) VALUES('Banana'),('Meatloaf'),('Rice');";
+            "INSERT INTO infoTable(name) VALUES('Broccoli'),('Meatloaf'),('Rice');";
     private static String SQL_INSERT_DEFAULT_TYPE_VALUES =
-            "INSERT INTO typeTable(name,type) VALUES('Banana','Vegetable'),('Meatloaf','Meat'),('Rice','Carbs'),('Meatloaf','Carbs');";
+            "INSERT INTO typeTable(name,Vegetable,Meat,Carbs) VALUES" +
+                    "('Broccoli',1,0,0),('Meatloaf',0,1,0),('Rice',0,0,1);";
 
     // Constructor
     public DBHelper(Context context, String dbName, SQLiteDatabase.CursorFactory factory, int version){
@@ -49,29 +52,27 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion){
-//        db.execSQL(SQL_DROP_INFO_TABLE);
-//        db.execSQL(SQL_DROP_TYPE_TABLE);
-//        onCreate(db);
+        db.execSQL(SQL_DROP_INFO_TABLE);
+        db.execSQL(SQL_DROP_TYPE_TABLE);
+        onCreate(db);
     }
 
     public List<String> getTypeNames(SQLiteDatabase db){
-        Cursor c = db.rawQuery("SELECT DISTINCT type FROM typeTable;", null);
+
+        Cursor c = db.rawQuery("PRAGMA table_info(" + "typeTable" + ")", null);
         try {
             c.moveToFirst();
-            List<String> typeNames = new ArrayList<String>();
+            c.moveToNext();
+            typeNames = new ArrayList<String>();
             while(!c.isAfterLast()) {
-                Log.i("foo",c.getString(0));
-                typeNames.add(c.getString(0));
+                //Log.i("PRAGMA",c.getString(0));
+                typeNames.add(c.getString(1));
                 c.moveToNext();
             }
             return typeNames;
         } finally {
             c.close();
         }
-    }
-
-    public void setColList(List<String> filterList){
-        this.colList = new ArrayList<>(filterList);
     }
 
     //Adds a new row in the database for the new info
@@ -117,7 +118,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         else{
             for (String s : checkedFilters){
-                queryString = queryString + "type = \"" + s + "\" OR ";
+                queryString = queryString + s + "=1 OR ";
             }
             queryString = queryString.substring(0, queryString.length() - 3);
         }
@@ -140,15 +141,21 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //Gets a list of all the types that an item has
-    public ArrayList<String> getItemsTrueFilters (SQLiteDatabase db, String item){
+    public ArrayList<String> getItemsAllTypes (SQLiteDatabase db, String item){
+        //Log.i("CHECK", "IAMHERE");
         ArrayList<String> types = new ArrayList<String>();
-        String queryString = "SELECT type FROM typeTable WHERE name = " + "'" + item + "';";
+        String queryString = "SELECT * FROM typeTable WHERE name = " + "'" + item + "';";
         Cursor cursor = db.rawQuery(queryString, null);
-
         cursor.moveToFirst();
-        while(!cursor.isAfterLast()){
-            types.add(cursor.getString(0));
-            cursor.moveToNext();
+        int i = 1;
+        int val;
+        for (String type : typeNames){
+            val = cursor.getInt(i);
+            if (val == 1) {
+                types.add(type);
+                //Log.i("CHECK", types.toString());
+            }
+            i++;
         }
         if (types.size() == 0){
             types.add("This item does not have any filters.");
