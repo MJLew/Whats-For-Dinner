@@ -14,70 +14,88 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static String DATABASE_NAME = "recipe_db";
-    ArrayList<String> colList;
+    List<String> typeNames;
     SQLiteStatement statement = null;
+    private static String DATABASE_NAME = "food_db";
+    // Possible extras = image, Ingredient list
+    private static String SQL_CREATE_INFO_TABLE =
+            "CREATE TABLE IF NOT EXISTS infoTable (" +
+                    "name TEXT NOT NULL PRIMARY KEY, " +
+                    "URL TEXT);";
+    private static String SQL_CREATE_TYPE_TABLE =
+            "CREATE TABLE IF NOT EXISTS typeTable (" +
+                    "name TEXT NOT NULL PRIMARY KEY, " +
+                    "Vegetable INTEGER DEFAULT 0," +
+                    "Meat INTEGER DEFAULT 0," +
+                    "Carbs INTEGER DEFAULT 0);";
+    private static String SQL_DROP_INFO_TABLE = "DROP TABLE IF EXISTS infoTable;";
+    private static String SQL_DROP_TYPE_TABLE = "DROP TABLE IF EXISTS typeTable;";
+    private static String SQL_INSERT_DEFAULT_INFO_VALUES =
+            "INSERT INTO infoTable(name) VALUES('Broccoli'),('Meatloaf'),('Rice');";
+    private static String SQL_INSERT_DEFAULT_TYPE_VALUES =
+            "INSERT INTO typeTable(name,Vegetable,Meat,Carbs) VALUES" +
+                    "('Broccoli',1,0,0),('Meatloaf',0,1,0),('Rice',0,0,1);";
 
+    // Constructor
     public DBHelper(Context context, String dbName, SQLiteDatabase.CursorFactory factory, int version){
         super(context, dbName, factory, version);
     }
 
+    // On create,
     public void onCreate(SQLiteDatabase db){
-        String createString = "CREATE TABLE IF NOT EXISTS recipeTable (Name TEXT NOT NULL,";
-        for (String s : colList){
-            Log.i("foo", s);
-            createString = createString + s + " INTEGER NOT NULL,";
-        }
-        createString = createString + " UNIQUE (Name));";
-        db.execSQL(createString);
-
-
+        Log.i("foo","0");
+        db.execSQL(SQL_CREATE_INFO_TABLE);
+        Log.i("foo","1");
+        db.execSQL(SQL_CREATE_TYPE_TABLE);
+        db.execSQL(SQL_INSERT_DEFAULT_INFO_VALUES);
+        db.execSQL(SQL_INSERT_DEFAULT_TYPE_VALUES);
     }
 
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion){
-        String dropString = "DROP TABLE IF EXISTS recipeTable;";
-        db.execSQL(dropString);
+        db.execSQL(SQL_DROP_INFO_TABLE);
+        db.execSQL(SQL_DROP_TYPE_TABLE);
         onCreate(db);
     }
 
-    public List<String> getColumnNames(SQLiteDatabase db){
-        Cursor c = db.rawQuery("SELECT * FROM recipeTable WHERE 0", null);
+    public List<String> getTypeNames(SQLiteDatabase db){
+
+        Cursor c = db.rawQuery("PRAGMA table_info(" + "typeTable" + ")", null);
         try {
-            List<String> columnNames = Arrays.asList(c.getColumnNames());
-            return columnNames;
+            c.moveToFirst();
+            c.moveToNext();
+            typeNames = new ArrayList<String>();
+            while(!c.isAfterLast()) {
+                //Log.i("PRAGMA",c.getString(0));
+                typeNames.add(c.getString(1));
+                c.moveToNext();
+            }
+            return typeNames;
         } finally {
             c.close();
         }
     }
 
-    public void setColList(List<String> filterList){
-        this.colList = new ArrayList<>(filterList);
-    }
-
-    public void addRow (SQLiteDatabase db, String[] rowStrings){
-        String addRowString = "INSERT OR IGNORE INTO recipeTable VALUES (";
+    //Adds a new row in the database for the new info
+    public void addRow (SQLiteDatabase db, String name, List<String> types, String URL) {
+        String addRowString = "INSERT OR REPLACE INTO typeTable(name,type) VALUES (" + name + ",";
         try {
-            for (String s : rowStrings){
-                    if (s.equals("1") || s.equals("0")){
-                        addRowString = addRowString + s + ",";
-                    }
-                    else{
-                        addRowString = addRowString + "'" + s + "',";
-                    }
+            if (types != null) {
+                for (String s : types) {
+                    db.execSQL(addRowString + s + ");");
+                }
             }
-            addRowString = addRowString.substring(0, addRowString.length() - 1);
-            addRowString = addRowString + ");";
-        }
-        catch (SQLiteException e){
+            if (URL != null) {
+                db.execSQL("INSERT OR REPLACE INTO infoTable(name,URL) VALUES (" + name + "," + URL + ");");
+            }
+        } catch (SQLiteException e) {
             e.printStackTrace();
         }
-        db.execSQL(addRowString);
     }
 
+    //Selects a single random row by name
     public String getRandomRow(SQLiteDatabase db, ArrayList<String> checkedFilters){
         String randomString = createSelectQueryFromFilters(checkedFilters);
-        randomString = randomString + " ORDER BY RANDOM() LIMIT 1;";
-
+        randomString = randomString + "ORDER BY RANDOM() LIMIT 1;";
         Cursor cursor = db.rawQuery(randomString, null);
         if (cursor.getCount() < 1){
             cursor.close();
@@ -85,12 +103,68 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         else {
             cursor.moveToFirst();
-            String result = cursor.getString(cursor.getColumnIndex("Name"));
+            String result = cursor.getString(0);
             cursor.close();
             return result;
         }
     }
 
+    //Takes a list of checked filters and constructs a SELECT query to choose all items with those types
+    public String createSelectQueryFromFilters (ArrayList<String> checkedFilters){
+        // SELECT name FROM typeTable WHERE type = "<>" OR type = "<>"
+        String queryString = "SELECT DISTINCT name FROM typeTable WHERE ";
+        if (checkedFilters == null || checkedFilters.size() == 0){
+            queryString = queryString.substring(0, queryString.length() - 6);
+        }
+        else{
+            for (String s : checkedFilters){
+                queryString = queryString + s + "=1 OR ";
+            }
+            queryString = queryString.substring(0, queryString.length() - 3);
+        }
+        return queryString;
+    }
+
+    //Gets a list of all of the checked filters based on their positions
+    public ArrayList<String> getTrueFiltersList (SQLiteDatabase db, SparseBooleanArray checkedFilters, ArrayList<String> filterList){
+        ArrayList<String> trueFiltersStrings = new ArrayList<String>();
+        if (checkedFilters.size() != 0){
+            for (int i = 0; i < checkedFilters.size(); i++){
+                boolean value = checkedFilters.valueAt(i);
+                if (value == true){
+                    String trueFilter = filterList.get(checkedFilters.keyAt(i));
+                    trueFiltersStrings.add(trueFilter);
+                }
+            }
+        }
+        return trueFiltersStrings;
+    }
+
+    //Gets a list of all the types that an item has
+    public ArrayList<String> getItemsAllTypes (SQLiteDatabase db, String item){
+        //Log.i("CHECK", "IAMHERE");
+        ArrayList<String> types = new ArrayList<String>();
+        String queryString = "SELECT * FROM typeTable WHERE name = " + "'" + item + "';";
+        Cursor cursor = db.rawQuery(queryString, null);
+        cursor.moveToFirst();
+        int i = 1;
+        int val;
+        for (String type : typeNames){
+            val = cursor.getInt(i);
+            if (val == 1) {
+                types.add(type);
+                //Log.i("CHECK", types.toString());
+            }
+            i++;
+        }
+        if (types.size() == 0){
+            types.add("This item does not have any filters.");
+        }
+        cursor.close();
+        return types;
+    }
+
+    //Get a list of all items based on filters
     public ArrayList<String> getFilteredStringList(SQLiteDatabase db, ArrayList<String> checkedFilters){
         ArrayList<String> filteredStringList = new ArrayList<String>();
         try{
@@ -102,7 +176,7 @@ public class DBHelper extends SQLiteOpenHelper {
             else {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()){
-                    filteredStringList.add(cursor.getString(cursor.getColumnIndex("Name")));
+                    filteredStringList.add(cursor.getString(0));
                     cursor.moveToNext();
                 }
                 cursor.close();
@@ -118,9 +192,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    //Gets a list of every item in the database
     public ArrayList<String> getAllList (SQLiteDatabase db){
         ArrayList<String> list = new ArrayList<String>();
-        Cursor cursor = db.rawQuery("SELECT * FROM recipeTable", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM typeTable;", null);
         if (cursor.getCount() < 1){
             cursor.close();
             return list;
@@ -137,49 +212,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<String> getTrueFiltersList (SQLiteDatabase db, SparseBooleanArray checkedFilters, ArrayList<String> filterList){
-    ArrayList<String> trueFiltersStrings = new ArrayList<String>();
 
-        if (checkedFilters.size() != 0){
-        for (int i = 0; i < checkedFilters.size(); i++){
-            boolean value = checkedFilters.valueAt(i);
-            if (value == true){
-                String trueFilter = filterList.get(checkedFilters.keyAt(i));
-                trueFiltersStrings.add(trueFilter);
-            }
-        }
-    }
-    return trueFiltersStrings;
-    }
 
-    public String createSelectQueryFromFilters (ArrayList<String> checkedFilters){
-        String queryString = "SELECT Name FROM recipeTable WHERE ";
-        if (checkedFilters == null || checkedFilters.size() == 0){
-            queryString = queryString.substring(0, queryString.length() - 6);
-        }
-        else{
-            for (String s : checkedFilters){
-                queryString = queryString + s + " = 1 AND ";
-            }
-            queryString = queryString.substring(0, queryString.length() - 4);
-        }
-        return queryString;
-    }
-
-    public ArrayList<String> getItemsTrueFilters (SQLiteDatabase db, String item){
-        ArrayList<String> trueColumns = new ArrayList<String>();
-        String queryString = "SELECT * FROM recipeTable WHERE Name = " + "'" + item + "'";
-        Cursor cursor = db.rawQuery(queryString, null);
-
-        cursor.moveToFirst();
-        for (int i = 0; i < cursor.getColumnCount(); i++){
-            if (cursor.getInt(i) == 1){
-                trueColumns.add(cursor.getColumnName(i));
-            }
-        }
-        if (trueColumns.size() == 0){
-            trueColumns.add("This item does not have any filters.");
-        }
-        return trueColumns;
-    }
 }

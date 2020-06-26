@@ -6,88 +6,150 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:text="You should have..." />
-
-        <TextView
-            android:id="@+id/suggestionTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="an actual file to read from"
-            android:textSize="25dp"
-            android:textStyle="bold|italic"
-            android:textColor="@color/colorAccent"
-            />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/manualSearchButton"
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You should have..."
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/suggestionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Click Next!"
+                android:textColor="@color/colorAccent"
+                android:textSize="25dp"
+                android:textStyle="bold|italic" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/previousSuggestButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onPreviousSuggestClick"
+                    android:text="Previous"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="8dp" />
+
+                <Button
+                    android:id="@+id/nextSuggestButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onNextSuggestClick"
+                    android:text="Next!" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/viewRecipeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onViewRecipeClick"
+                    android:text="View Saved Recipe"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="8dp" />
+            </LinearLayout>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onManualSearchClick"
-                android:text="Search Recipes"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp" />
-            <Button
-                android:id="@+id/nextSuggestButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onNextSuggestClick"
-                android:text="Next!" />
+                android:text="Filters:" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <GridView
+                    android:id="@+id/filterGridView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:numColumns="2"></GridView>
+            </ScrollView>
+
 
         </LinearLayout>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/mainEditListFAB"
+            android:layout_width="@dimen/subFABDimen"
+            android:layout_height="@dimen/subFABDimen"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/sub_fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:src="@drawable/editicon"
+            app:elevation="0dp" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/mainSearchListFAB"
+            android:layout_width="@dimen/subFABDimen"
+            android:layout_height="@dimen/subFABDimen"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/sub_fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:contentDescription="submit"
+            android:src="@drawable/searchicon"
+            app:elevation="0dp" />
 
         <TextView
+            android:id="@+id/mainEditListTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filters:" />
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/fab_text_margin_right"
+            android:layout_marginBottom="@dimen/fab_text_margin_bottom"
+            android:text="Edit List" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+        <TextView
+            android:id="@+id/mainSearchListTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/fab_text_margin_right"
+            android:layout_marginBottom="@dimen/fab_text_margin_bottom"
+            android:text="Search List" />
 
-            <GridView
-                android:id="@+id/filterGridView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:numColumns="2"></GridView>
-        </ScrollView>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/mainMenuFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:contentDescription="submit"
+            android:src="@drawable/menuicon" />
 
-
-
-
-    </LinearLayout>
+    </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

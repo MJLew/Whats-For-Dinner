@@ -6,52 +6,101 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/SearchTitleView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Search Results:"
+                android:textSize="25dp"
+                android:textStyle="bold"
+
+                />
+
+            <ListView
+                android:id="@+id/searchListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="5">
+
+            </ListView>
+
+            <Button
+                android:id="@+id/useFilterButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:onClick="onUseFilterClick"
+                android:text="Use Filters" />
+
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/searchEditListFAB"
+            android:layout_width="@dimen/subFABDimen"
+            android:layout_height="@dimen/subFABDimen"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/sub_fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:src="@drawable/editicon"
+            app:elevation="0dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/searchEditFiltersFAB"
+            android:layout_width="@dimen/subFABDimen"
+            android:layout_height="@dimen/subFABDimen"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/sub_fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:contentDescription="submit"
+            android:src="@drawable/searchicon"
+            app:elevation="0dp" />
 
         <TextView
-            android:id="@+id/SearchTitleView"
-            android:layout_width="match_parent"
+            android:id="@+id/searchEditFiltersTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Search Results:"
-            android:textSize="25dp"
-            android:textStyle="bold"
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/fab_text_margin_right"
+            android:layout_marginBottom="@dimen/fab_text_margin_bottom"
+            android:text="Search List" />
 
-            />
-
-        <ListView
-            android:id="@+id/searchListView"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/searchEditListTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/fab_text_margin_right"
+            android:layout_marginBottom="@dimen/fab_text_margin_bottom"
+            android:text="Edit List" />
 
-
-        <Button
-            android:id="@+id/useFilterButton"
-            android:layout_width="match_parent"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/searchMenuFAB"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:onClick="onUseFilterClick"
-            android:text="Use Filters"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp" />
-    </LinearLayout>
+            android:layout_gravity="end|bottom"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:contentDescription="submit"
+            android:src="@drawable/menuicon" />
+
+    </FrameLayout>
 
 
 </android.support.constraint.ConstraintLayout>
