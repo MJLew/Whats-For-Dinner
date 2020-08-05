@@ -58,7 +58,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public List<String> getTypeNames(SQLiteDatabase db){
+        updateTypeNames(db);
+        return typeNames;
+    }
 
+    public void updateTypeNames(SQLiteDatabase db){
         Cursor c = db.rawQuery("PRAGMA table_info(" + "typeTable" + ")", null);
         try {
             c.moveToFirst();
@@ -69,23 +73,34 @@ public class DBHelper extends SQLiteOpenHelper {
                 typeNames.add(c.getString(1));
                 c.moveToNext();
             }
-            return typeNames;
         } finally {
             c.close();
         }
     }
 
     //Adds a new row in the database for the new info
-    public void addRow (SQLiteDatabase db, String name, List<String> types, String URL) {
-        String addRowString = "INSERT OR REPLACE INTO typeTable(name,type) VALUES (" + name + ",";
-        try {
-            if (types != null) {
-                for (String s : types) {
-                    db.execSQL(addRowString + s + ");");
-                }
+    public void addRow (SQLiteDatabase db, String name, SparseBooleanArray checkedPositions, String URL) {
+        String addRowString = "INSERT OR REPLACE INTO typeTable(name,"; //Start of statement
+
+        for (String s:getTypeNames(db)){ //Add all current type names in database
+            addRowString = addRowString + s + ",";
+        }
+        addRowString = addRowString.substring(0,addRowString.length()-1); //Remove ,
+        addRowString = addRowString + ") VALUES (\'" + name + "\',"; //add rest up to Values
+        for (int i = 0; i < typeNames.size(); i++){//Add 1 if checked, 0 if not
+            if (i != checkedPositions.keyAt(i)){
+                addRowString = addRowString + "0,";
             }
+            else{
+                addRowString = addRowString + "1,";
+            }
+        }
+        addRowString = addRowString.substring(0,addRowString.length()-1); //Remove ,
+        addRowString = addRowString + ");"; //add rest of statement
+        try {
+            db.execSQL(addRowString);
             if (URL != null) {
-                db.execSQL("INSERT OR REPLACE INTO infoTable(name,URL) VALUES (" + name + "," + URL + ");");
+                db.execSQL("INSERT OR REPLACE INTO infoTable(name,URL) VALUES (\'" + name + "\',\'" + URL + "\');");
             }
         } catch (SQLiteException e) {
             e.printStackTrace();
@@ -125,7 +140,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return queryString;
     }
 
-    //Gets a list of all of the checked filters based on their positions
+    /**
+     * Gets a list of all of the checked filters based on their positions
+     * @param db
+     * @param checkedFilters
+     * @param filterList
+     * @return
+     */
     public ArrayList<String> getTrueFiltersList (SQLiteDatabase db, SparseBooleanArray checkedFilters, ArrayList<String> filterList){
         ArrayList<String> trueFiltersStrings = new ArrayList<String>();
         if (checkedFilters.size() != 0){
@@ -212,6 +233,19 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-
+//    public void get(SQLiteDatabase db, ArrayList<String> checkedFilters){
+//        String getQuery = "SELECT name"
+//        Cursor cursor = db.rawQuery(randomString, null);
+//        if (cursor.getCount() < 1){
+//            cursor.close();
+//            return "Nothing here";
+//        }
+//        else {
+//            cursor.moveToFirst();
+//            String result = cursor.getString(0);
+//            cursor.close();
+//            return result;
+//        }
+//    }
 
 }

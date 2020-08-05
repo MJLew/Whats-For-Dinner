@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#bf0000</color>
     <color name="colorPrimaryLight">#ff6161</color>
     <color name="colorAccent">#0000cd</color>
+    <color name="colorFAB">#ff00ff</color>
+    <color name="colorBackground">#000000</color>
+    <color name="colorButton">#ADD8E6</color>
+
 </resources>

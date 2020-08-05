@@ -47,7 +47,7 @@ public class FABMenu {
         }
         else {
             Log.i("BUH", "close");
-            mainFAB.setImageResource(R.drawable.menuicon);
+            mainFAB.setImageResource(R.drawable.navigationicon);
             isFABOpen = false;
             for (int i = 0; i < subFABs.size(); i++) {
                 labels.get(i).setVisibility(View.INVISIBLE);

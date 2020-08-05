@@ -19,25 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left|top"
-            android:text="Edit Items" />
+            android:text="Add / Delete Filters" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left|top"
-                android:text="Name:" />
 
-            <EditText
-                android:id="@+id/editNameEditText"
-                android:layout_width="@dimen/standard_155"
-                android:layout_height="wrap_content"
-                android:text="Enter item to edit" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,30 +39,21 @@
                 android:fillViewport="true">
 
                 <GridView
-                    android:id="@+id/editItemFiltersGridView"
+                    android:id="@+id/editFiltersGridView"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:numColumns="3"></GridView>
+                    android:numColumns="2"></GridView>
             </ScrollView>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/confirmAddButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left|top"
-                android:text="URL:" />
+            android:background="@color/colorButton"
+            android:onClick="onConfirmAddClick"
+            android:text="Add New Filter" />
 
-            <EditText
-                android:id="@+id/editURLEditText"
-                android:layout_width="@dimen/standard_155"
-                android:layout_height="wrap_content"
-                android:text="URL" />
-        </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>

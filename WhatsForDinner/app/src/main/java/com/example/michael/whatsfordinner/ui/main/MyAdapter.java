@@ -15,6 +15,7 @@ public class MyAdapter extends FragmentPagerAdapter {
         this.totalTabs = totalTabs;
     }
 
+
     public Fragment getItem(int position){
         switch (position){
             case 0:
@@ -26,6 +27,9 @@ public class MyAdapter extends FragmentPagerAdapter {
             case 2:
                 EditFragment editFragment = new EditFragment();
                 return editFragment;
+            case 3:
+                FilterFragment filterFragment = new FilterFragment();
+                return filterFragment;
             default:
                 return null;
         }
